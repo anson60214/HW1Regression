@@ -1,3 +1,11 @@
+*.pyc
+*.csv
+runs/
+models/
+
+
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
