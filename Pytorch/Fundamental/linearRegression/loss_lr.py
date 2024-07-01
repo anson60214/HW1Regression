@@ -17,17 +17,17 @@ iter_count = 500
 lr = 0.005
 
 # Define the forward pass function to calculate the predicted values y_pred
-# def forward(X):
-#     return torch.matmul(X, w)  # Matrix multiplication of X and w
+# def forward(x):
+#     return torch.matmul(x, w)  # Matrix multiplication of X and w
 class MyModel(torch.nn.Module):
     def __init__(self):
         super().__init__()
         # self.w = torch.nn.Parameter(torch.rand(2, 1, dtype=torch.float32))
         self.linear = torch.nn.Linear(2, 1)
 
-    def forward(self, X):
-        # return torch.matmul(X, self.w)
-        return self.linear(X)
+    def forward(self, x):
+        # return torch.matmul(x, self.w)
+        return self.linear(x)
 model = MyModel()
 
 # Define the loss function (Mean Squared Error divided by 2)
