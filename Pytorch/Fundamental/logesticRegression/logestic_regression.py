@@ -27,7 +27,7 @@ y_test = torch.from_numpy(y_test_np)
 class MyLogisticRegression(torch.nn.Module):
     
     def __init__(self, input_features):
-        super().__init__()  # Initialize the parent class
+        super(MyLogisticRegression, self).__init__()  # Initialize the parent class
         self.linear = torch.nn.Linear(input_features, 1)
 
     def forward(self, x):
@@ -58,7 +58,7 @@ for epoch in range(num_epochs):
     # eval
     with torch.no_grad():
         y_pred_test = model(X_test.view(-1, input_features))
-        y_pred_test = y_pred_test.round().squeeze()
+        y_pred_test = y_pred_test.round().squeeze() # (B, 1) -> (B)
         total_correct = y_pred_test.eq(y_test).sum()
         prec = total_correct.item() / len(y_test)
         print(f'epoch: {epoch}, loss: {loss.item()}, prec: {prec}')
