@@ -52,6 +52,7 @@ class SelfAttention(nn.Module):
         # after einsum: (batch_size, query_len, heads, value_len) -> 
         # out = flattern last 2 dimension: (batch_size, query_len, emb_size)
         
+        # finally use fc to compile b from all different head
         out = self.fc_out(out)
         return out
     
@@ -71,11 +72,15 @@ class TransformerBlock(nn.Module):
 
     def forward(self, query, key, value, mask):
         attention = self.attention(query, key, value, mask)
-
-        x = self.dropout(self.norm1(attention + query)) # add & norm, x dim: (batch_size, seq_length, embed_size)
+        
+        # add & norm
+        x = self.dropout(self.norm1(attention + query)) # x dim: (batch_size, seq_length, embed_size)
+        
+        # feed forward
         forward = self.feed_forward(x)
 
-        out = self.dropout(self.norm2(forward + x)) # add & norm
+        # add & norm
+        out = self.dropout(self.norm2(forward + x))
         return out
 
 class Encoder(nn.Module):
@@ -125,6 +130,7 @@ class Encoder(nn.Module):
         #         [0, 1, 2, 3, 4]])  # Third sequence
         out = self.dropout(self.word_embedding(x) + self.position_embedding(positions))
 
+        # Run N number of transformer block
         for layer in self.layers:
             out = layer(out, out, out, mask)  
             # becasue query, key and value are all the same so we use out x 3 
@@ -142,10 +148,16 @@ class DecoderBlock(nn.Module):
         self.dropout = nn.Dropout(dropout)
 
     def forward(self, x, key, value, src_mask, trg_mask): # trg: target
+        
+        # mask attention
         attention = self.attention(x, x, x, trg_mask)
-        query = self.dropout(self.norm(attention + x)) # add & norm
-        out = self.transformer_block(query, key, value, src_mask) 
+
+        # add & norm
+        query = self.dropout(self.norm(attention + x))
+
+        # cross attention and add & norm
         # In decoder, there is a repeat of encoder type of transfomer but key and value are from encoder
+        out = self.transformer_block(query, key, value, src_mask) 
         return out
     
 class Decoder(nn.Module):
