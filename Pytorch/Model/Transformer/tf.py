@@ -194,6 +194,7 @@ class Decoder(nn.Module):
         positions = torch.arange(0, seq_length).expand(N, seq_length).to(self.device)
         x = self.dropout(self.word_embedding(x) + self.position_embedding(positions))
 
+        # Run N number of decoder transformer block
         for layer in self.layers:
             x = layer(x, enc_out, enc_out, src_mask, trg_mask)
 
